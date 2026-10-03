@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "integral-benchmark"
+version = "0.1.0"
+description = "Solver-independent integral corpus, coverage map, and reproducible evaluation harness"
+requires-python = ">=3.11"
+dependencies = ["sympy==1.14.0"]
+
+[project.scripts]
+integral-bench = "integral_benchmark.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["integral_benchmark*"]
+
+[tool.setuptools.package-data]
+integral_benchmark = ["taxonomy.json", "adapters/*.mjs"]

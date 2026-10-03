@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+.cache/
+corpus/imported/
+**/imported/
+reports/local/
+reports/baseline*/
+reports/pilot-ce/

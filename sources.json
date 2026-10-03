@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {"id":"sympy-combined","url":"https://github.com/sympy/integration-test-suites","revision":"871364f2923d6684d45470a91d7584ca162d0723","status":"inventoried","license":"per-suite-review","notes":"Raw inventory only; imported references are unreviewed. The upstream has its own import omissions."},
+    {"id":"rubi-original","url":"https://github.com/RuleBasedIntegration/MathematicaSyntaxTestSuite","status":"available-through-combined-corpus","license":"MIT-upstream-notices-required","priority":1},
+    {"id":"mit-official","url":"https://math.mit.edu/~yyao1/integrationbee.html","status":"upstream-transcription-inventoried-not-independently-audited","license":"no-explicit-source-license-review-required","priority":1},
+    {"id":"berkeley-hmmt-resource-index","url":"https://sites.google.com/view/silveralchemist/integration-bee-stuff/integration-bee-mock-problems","status":"discovered-not-imported","license":"source-specific-review-required","priority":1,"notes":"Follow links to original problem documents and confirm event/year; index is not proof of archive completeness."},
+    {"id":"jee-advanced","url":"https://jeeadv.ac.in/archive.html","status":"discovered-not-imported","license":"source-specific-review-required","priority":2},
+    {"id":"dlmf","url":"https://dlmf.nist.gov/","status":"planned","license":"source-specific-review-required","priority":2},
+    {"id":"fungrim","url":"https://fungrim.org/","status":"planned","license":"source-specific-review-required","priority":2},
+    {"id":"blake-original","url":"https://github.com/stblake/algebraic_integration","status":"available-through-combined-corpus","license":"MIT-problems-translation-separate","priority":2},
+    {"id":"integral-tables","status":"planned","license":"edition-and-source-specific-review-required","priority":2,"notes":"Select exact editions, errata, formula identifiers, and permitted redistribution before acquisition."},
+    {"id":"new-holdout","status":"planned","license":"original-project-work","priority":2,"notes":"No contamination-resistant holdout exists in this release."}
+  ]
+}

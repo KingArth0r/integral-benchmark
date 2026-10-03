@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:integral-benchmark:case:1",
+  "title": "Integral benchmark case version 1",
+  "type": "object",
+  "required": ["schema_version", "id", "kind", "integrand", "variable", "domains", "assumptions", "family", "source", "expected"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "minLength": 1},
+    "kind": {"enum": ["indefinite", "definite", "principal-value", "contour", "numerical"]},
+    "integrand": {"$ref": "#/$defs/expression"},
+    "variable": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]*$"},
+    "domains": {"type": "object", "additionalProperties": {"enum": ["real", "complex", "positive"]}},
+    "assumptions": {"type": "array"},
+    "assumptions_status": {"type": "string"},
+    "branches": {"type": "string"},
+    "family": {"type": "string", "minLength": 1},
+    "parameters": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "bounds": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/expression"}},
+    "contour": {"type": "object", "required": ["kind"], "properties": {"kind": {"enum": ["circle", "rectangle", "polygon"]}}},
+    "source": {"type": "object", "required": ["suite", "redistribution"]},
+    "expected": {
+      "type": "object", "required": ["status", "trust"],
+      "properties": {
+        "status": {"enum": ["finite", "divergent", "undefined", "unknown"]},
+        "trust": {"enum": ["curated-reference", "upstream-unreviewed"]},
+        "expression": {"anyOf": [{"$ref": "#/$defs/expression"}, {"type": "null"}]}
+      }
+    }
+  },
+  "allOf": [
+    {"if": {"properties": {"kind": {"enum": ["definite", "principal-value", "numerical"]}}}, "then": {"required": ["bounds"]}},
+    {"if": {"properties": {"kind": {"const": "contour"}}}, "then": {"required": ["contour"]}}
+  ],
+  "$defs": {
+    "expression": {
+      "oneOf": [
+        {"type": "integer"},
+        {"type": "string", "minLength": 1},
+        {"type": "object", "required": ["decimal"], "additionalProperties": false, "properties": {"decimal": {"type": "string"}}},
+        {"type": "array", "minItems": 2, "prefixItems": [{"type": "string"}], "items": {"$ref": "#/$defs/expression"}}
+      ]
+    }
+  }
+}

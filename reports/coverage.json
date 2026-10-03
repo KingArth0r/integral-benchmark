@@ -1,0 +1,1412 @@
+{
+  "schema_version": 1,
+  "title": "Integral Benchmark coverage map",
+  "families": [
+    {
+      "id": "rational-polynomial",
+      "label": "Polynomials and rational functions",
+      "capabilities": [
+        "Hermite reduction",
+        "partial fractions",
+        "exact roots"
+      ],
+      "pilot_cases": 6,
+      "inventory_records": 130,
+      "engines": {
+        "ce": {
+          "attempted": 6,
+          "identity-checked": 3,
+          "solver:answer": 6,
+          "numerically-supported": 2,
+          "reference-match": 1
+        },
+        "sympy": {
+          "attempted": 6,
+          "identity-checked": 5,
+          "solver:answer": 6,
+          "reference-match": 1
+        }
+      }
+    },
+    {
+      "id": "algebraic-general",
+      "label": "General algebraic powers",
+      "capabilities": [
+        "parameter conditions",
+        "power substitutions"
+      ],
+      "pilot_cases": 1,
+      "inventory_records": 18937,
+      "engines": {
+        "ce": {
+          "attempted": 1,
+          "identity-checked": 1,
+          "solver:answer": 1
+        },
+        "sympy": {
+          "attempted": 1,
+          "identity-checked": 1,
+          "solver:answer": 1
+        }
+      }
+    },
+    {
+      "id": "algebraic-radicals",
+      "label": "Radicals and real roots",
+      "capabilities": [
+        "branch tracking",
+        "rationalizing substitutions"
+      ],
+      "pilot_cases": 3,
+      "inventory_records": 7926,
+      "engines": {
+        "ce": {
+          "attempted": 3,
+          "identity-checked": 3,
+          "solver:answer": 3
+        },
+        "sympy": {
+          "attempted": 3,
+          "identity-checked": 3,
+          "solver:answer": 3
+        }
+      }
+    },
+    {
+      "id": "algebraic-pseudoelliptic",
+      "label": "Pseudo elliptic and higher algebraic integrals",
+      "capabilities": [
+        "algebraic extensions",
+        "Risch Trager methods"
+      ],
+      "pilot_cases": 0,
+      "inventory_records": 3141,
+      "engines": {
+        "ce": {},
+        "sympy": {}
+      }
+    },
+    {
+      "id": "exponential",
+      "label": "Exponential functions",
+      "capabilities": [
+        "integration by parts",
+        "Gaussian reductions"
+      ],
+      "pilot_cases": 3,
+      "inventory_records": 512,
+      "engines": {
+        "ce": {
+          "attempted": 3,
+          "identity-checked": 3,
+          "solver:answer": 3
+        },
+        "sympy": {
+          "attempted": 3,
+          "identity-checked": 3,
+          "solver:answer": 3
+        }
+      }
+    },
+    {
+      "id": "logarithmic",
+      "label": "Logarithmic functions",
+      "capabilities": [
+        "branch tracking",
+        "integration by parts"
+      ],
+      "pilot_cases": 2,
+      "inventory_records": 3179,
+      "engines": {
+        "ce": {
+          "attempted": 2,
+          "identity-checked": 2,
+          "solver:answer": 2
+        },
+        "sympy": {
+          "attempted": 2,
+          "identity-checked": 2,
+          "solver:answer": 2
+        }
+      }
+    },
+    {
+      "id": "exponential-logarithmic",
+      "label": "Nested exponential and logarithmic towers",
+      "capabilities": [
+        "transcendental Risch methods"
+      ],
+      "pilot_cases": 2,
+      "inventory_records": 10367,
+      "engines": {
+        "ce": {
+          "attempted": 2,
+          "identity-checked": 1,
+          "solver:answer": 1,
+          "not-solved": 1,
+          "solver:unevaluated": 1
+        },
+        "sympy": {
+          "attempted": 2,
+          "identity-checked": 2,
+          "solver:answer": 2
+        }
+      }
+    },
+    {
+      "id": "trigonometric",
+      "label": "Trigonometric functions",
+      "capabilities": [
+        "identities",
+        "rational trig substitution"
+      ],
+      "pilot_cases": 4,
+      "inventory_records": 23093,
+      "engines": {
+        "ce": {
+          "attempted": 4,
+          "identity-checked": 3,
+          "solver:answer": 4,
+          "reference-match": 1
+        },
+        "sympy": {
+          "attempted": 4,
+          "identity-checked": 3,
+          "solver:answer": 4,
+          "reference-match": 1
+        }
+      }
+    },
+    {
+      "id": "inverse-trigonometric",
+      "label": "Inverse trigonometric functions",
+      "capabilities": [
+        "integration by parts",
+        "branches"
+      ],
+      "pilot_cases": 2,
+      "inventory_records": 3170,
+      "engines": {
+        "ce": {
+          "attempted": 2,
+          "identity-checked": 2,
+          "solver:answer": 2
+        },
+        "sympy": {
+          "attempted": 2,
+          "identity-checked": 2,
+          "solver:answer": 2
+        }
+      }
+    },
+    {
+      "id": "hyperbolic",
+      "label": "Hyperbolic functions",
+      "capabilities": [
+        "exponential conversion"
+      ],
+      "pilot_cases": 2,
+      "inventory_records": 5166,
+      "engines": {
+        "ce": {
+          "attempted": 2,
+          "identity-checked": 2,
+          "solver:answer": 2
+        },
+        "sympy": {
+          "attempted": 2,
+          "identity-checked": 2,
+          "solver:answer": 2
+        }
+      }
+    },
+    {
+      "id": "inverse-hyperbolic",
+      "label": "Inverse hyperbolic functions",
+      "capabilities": [
+        "branches",
+        "substitution"
+      ],
+      "pilot_cases": 1,
+      "inventory_records": 4515,
+      "engines": {
+        "ce": {
+          "attempted": 1,
+          "identity-checked": 1,
+          "solver:answer": 1
+        },
+        "sympy": {
+          "attempted": 1,
+          "identity-checked": 1,
+          "solver:answer": 1
+        }
+      }
+    },
+    {
+      "id": "piecewise-absolute",
+      "label": "Absolute values and piecewise functions",
+      "capabilities": [
+        "interval decomposition",
+        "inequalities"
+      ],
+      "pilot_cases": 2,
+      "inventory_records": 11,
+      "engines": {
+        "ce": {
+          "attempted": 2,
+          "identity-checked": 1,
+          "solver:answer": 2,
+          "reference-match": 1
+        },
+        "sympy": {
+          "attempted": 2,
+          "not-solved": 1,
+          "solver:conditional": 1,
+          "reference-match": 1,
+          "solver:answer": 1
+        }
+      }
+    },
+    {
+      "id": "piecewise-discrete",
+      "label": "Floor ceiling and discrete structure",
+      "capabilities": [
+        "finite sums",
+        "interval decomposition"
+      ],
+      "pilot_cases": 1,
+      "inventory_records": 30,
+      "engines": {
+        "ce": {
+          "attempted": 1,
+          "not-solved": 1,
+          "solver:unevaluated": 1
+        },
+        "sympy": {
+          "attempted": 1,
+          "not-solved": 1,
+          "solver:unevaluated": 1
+        }
+      }
+    },
+    {
+      "id": "gamma-beta-zeta",
+      "label": "Gamma beta and zeta functions",
+      "capabilities": [
+        "Mellin transforms",
+        "parameter conditions"
+      ],
+      "pilot_cases": 4,
+      "inventory_records": 14,
+      "engines": {
+        "ce": {
+          "attempted": 4,
+          "not-solved": 2,
+          "solver:unevaluated": 2,
+          "reference-match": 2,
+          "solver:answer": 2
+        },
+        "sympy": {
+          "attempted": 4,
+          "not-solved": 2,
+          "solver:unevaluated": 2,
+          "reference-match": 2,
+          "solver:answer": 2
+        }
+      }
+    },
+    {
+      "id": "hypergeometric-polylog",
+      "label": "Hypergeometric functions and polylogarithms",
+      "capabilities": [
+        "function recognition",
+        "analytic continuation"
+      ],
+      "pilot_cases": 2,
+      "inventory_records": 222,
+      "engines": {
+        "ce": {
+          "attempted": 2,
+          "not-solved": 2,
+          "solver:unevaluated": 2
+        },
+        "sympy": {
+          "attempted": 2,
+          "not-solved": 1,
+          "solver:answer-untranslated": 1,
+          "reference-match": 1,
+          "solver:answer": 1
+        }
+      }
+    },
+    {
+      "id": "elliptic",
+      "label": "Elliptic integrals",
+      "capabilities": [
+        "algebraic reduction",
+        "branch conventions"
+      ],
+      "pilot_cases": 2,
+      "inventory_records": 0,
+      "engines": {
+        "ce": {
+          "attempted": 2,
+          "not-solved": 2,
+          "solver:unevaluated": 2
+        },
+        "sympy": {
+          "attempted": 2,
+          "identity-checked": 1,
+          "solver:answer": 2,
+          "reference-match": 1
+        }
+      }
+    },
+    {
+      "id": "bessel",
+      "label": "Bessel functions",
+      "capabilities": [
+        "recurrences",
+        "transforms"
+      ],
+      "pilot_cases": 1,
+      "inventory_records": 0,
+      "engines": {
+        "ce": {
+          "attempted": 1,
+          "not-solved": 1,
+          "solver:unevaluated": 1
+        },
+        "sympy": {
+          "attempted": 1,
+          "identity-checked": 1,
+          "solver:answer": 1
+        }
+      }
+    },
+    {
+      "id": "special-other",
+      "label": "Other special functions",
+      "capabilities": [
+        "differential identities"
+      ],
+      "pilot_cases": 3,
+      "inventory_records": 400,
+      "engines": {
+        "ce": {
+          "attempted": 3,
+          "not-solved": 1,
+          "solver:unevaluated": 1,
+          "identity-checked": 2,
+          "solver:answer": 2
+        },
+        "sympy": {
+          "attempted": 3,
+          "identity-checked": 3,
+          "solver:answer": 3
+        }
+      }
+    },
+    {
+      "id": "definite-symmetry",
+      "label": "Definite integral symmetry",
+      "capabilities": [
+        "involutions",
+        "periodicity",
+        "convergence"
+      ],
+      "pilot_cases": 2,
+      "inventory_records": null,
+      "engines": {
+        "ce": {
+          "attempted": 2,
+          "reference-match": 2,
+          "solver:answer": 2
+        },
+        "sympy": {
+          "attempted": 2,
+          "reference-match": 2,
+          "solver:answer": 2
+        }
+      }
+    },
+    {
+      "id": "improper-endpoints",
+      "label": "Endpoint and interior singularities",
+      "capabilities": [
+        "limits",
+        "local integrability"
+      ],
+      "pilot_cases": 6,
+      "inventory_records": null,
+      "engines": {
+        "ce": {
+          "attempted": 6,
+          "reference-match": 1,
+          "solver:answer": 1,
+          "not-solved": 1,
+          "solver:unevaluated": 1,
+          "safe-rejection": 2,
+          "solver:undefined": 2,
+          "classification-match": 2,
+          "solver:divergent": 2
+        },
+        "sympy": {
+          "attempted": 6,
+          "reference-match": 2,
+          "solver:answer": 2,
+          "not-solved": 1,
+          "solver:unevaluated": 1,
+          "safe-rejection": 1,
+          "solver:undefined": 1,
+          "classification-match": 2,
+          "solver:divergent": 2
+        }
+      }
+    },
+    {
+      "id": "improper-infinity",
+      "label": "Infinite intervals and oscillation",
+      "capabilities": [
+        "asymptotics",
+        "Dirichlet convergence"
+      ],
+      "pilot_cases": 7,
+      "inventory_records": null,
+      "engines": {
+        "ce": {
+          "attempted": 7,
+          "reference-match": 6,
+          "solver:answer": 6,
+          "classification-match": 1,
+          "solver:divergent": 1
+        },
+        "sympy": {
+          "attempted": 7,
+          "reference-match": 5,
+          "solver:answer": 6,
+          "numerically-supported": 1,
+          "classification-match": 1,
+          "solver:divergent": 1
+        }
+      }
+    },
+    {
+      "id": "principal-value",
+      "label": "Cauchy principal values",
+      "capabilities": [
+        "symmetric limits",
+        "real pole indentation"
+      ],
+      "pilot_cases": 3,
+      "inventory_records": null,
+      "engines": {
+        "ce": {
+          "attempted": 3,
+          "not-solved": 2,
+          "solver:unsupported-kind": 2,
+          "numerically-supported": 1,
+          "solver:answer": 1
+        },
+        "sympy": {
+          "attempted": 3,
+          "reference-match": 1,
+          "solver:answer": 1,
+          "not-solved": 1,
+          "solver:unevaluated": 1,
+          "classification-match": 1,
+          "solver:divergent": 1
+        }
+      }
+    },
+    {
+      "id": "contour-meromorphic",
+      "label": "Meromorphic contour integrals",
+      "capabilities": [
+        "poles",
+        "residues",
+        "containment",
+        "orientation"
+      ],
+      "pilot_cases": 7,
+      "inventory_records": null,
+      "engines": {
+        "ce": {
+          "attempted": 7,
+          "reference-match": 6,
+          "solver:answer": 6,
+          "classification-match": 1,
+          "solver:undefined": 1
+        },
+        "sympy": {
+          "attempted": 7,
+          "not-solved": 7,
+          "solver:unsupported-kind": 7
+        }
+      }
+    },
+    {
+      "id": "contour-essential",
+      "label": "Essential singularities",
+      "capabilities": [
+        "Laurent coefficients"
+      ],
+      "pilot_cases": 2,
+      "inventory_records": null,
+      "engines": {
+        "ce": {
+          "attempted": 2,
+          "reference-match": 2,
+          "solver:answer": 2
+        },
+        "sympy": {
+          "attempted": 2,
+          "not-solved": 2,
+          "solver:unsupported-kind": 2
+        }
+      }
+    },
+    {
+      "id": "contour-branch",
+      "label": "Branch cut contour integrals",
+      "capabilities": [
+        "keyhole contours",
+        "branch jumps"
+      ],
+      "pilot_cases": 0,
+      "inventory_records": null,
+      "engines": {
+        "ce": {},
+        "sympy": {}
+      }
+    },
+    {
+      "id": "parameter-conditions",
+      "label": "Parameter dependent convergence and exceptional values",
+      "capabilities": [
+        "assumptions",
+        "case splitting"
+      ],
+      "pilot_cases": 0,
+      "inventory_records": null,
+      "engines": {
+        "ce": {},
+        "sympy": {}
+      }
+    },
+    {
+      "id": "series-products",
+      "label": "Infinite series products and nested expressions",
+      "capabilities": [
+        "interchange justification",
+        "summation"
+      ],
+      "pilot_cases": 0,
+      "inventory_records": null,
+      "engines": {
+        "ce": {},
+        "sympy": {}
+      }
+    },
+    {
+      "id": "non-elementarity",
+      "label": "Non elementary antiderivative decisions",
+      "capabilities": [
+        "Liouville certificates"
+      ],
+      "pilot_cases": 0,
+      "inventory_records": null,
+      "engines": {
+        "ce": {},
+        "sympy": {}
+      }
+    },
+    {
+      "id": "multivariate",
+      "label": "Multiple integrals",
+      "capabilities": [
+        "Fubini conditions",
+        "Jacobian transformations"
+      ],
+      "pilot_cases": 0,
+      "inventory_records": null,
+      "engines": {
+        "ce": {},
+        "sympy": {}
+      }
+    },
+    {
+      "id": "numerical",
+      "label": "Numerical accuracy and stability",
+      "capabilities": [
+        "adaptive quadrature",
+        "error control"
+      ],
+      "pilot_cases": 0,
+      "inventory_records": null,
+      "engines": {
+        "ce": {},
+        "sympy": {}
+      }
+    }
+  ],
+  "runs": {
+    "ce": {
+      "metadata": {
+        "schema_version": 1,
+        "engine": "ce",
+        "engine_identity": {
+          "revision": "1dc4f0864ad3c79fd11c5970ee08507c4a0e3288",
+          "dirty": false,
+          "rules": false,
+          "runtime": "v22.14.0",
+          "module_sha256": "06c584ffb6a3d5e5dd5563d9e9adacc7a7e10aacad01a886bbd17dc6f3aa6a56",
+          "load_mode": "caller-built-bundle"
+        },
+        "started_utc": "2026-10-03T22:59:37.107502+00:00",
+        "platform": "Windows",
+        "architecture": "AMD64",
+        "python": "3.12.14",
+        "logical_cpus": 14,
+        "timeout_seconds": 30.0,
+        "verification_timeout_seconds": 20.0,
+        "jobs": 1,
+        "case_count": 68,
+        "corpus_sha256": "361b35a99eda67782c1abb802ba7fd0f2974b99f546ed71b7234ddc37317afbe",
+        "selected_ids": [
+          "pilot:polynomial",
+          "pilot:reciprocal",
+          "pilot:lorentz",
+          "pilot:partial-fractions",
+          "pilot:repeated-pole",
+          "pilot:sqrt",
+          "pilot:semicircle",
+          "pilot:radical-substitution",
+          "pilot:power-fraction",
+          "pilot:exponential",
+          "pilot:exponential-parts",
+          "pilot:gaussian",
+          "pilot:logarithm",
+          "pilot:log-square",
+          "pilot:exp-log",
+          "pilot:nested-exp",
+          "pilot:sin",
+          "pilot:cos-square",
+          "pilot:trig-substitution",
+          "pilot:arctan",
+          "pilot:arcsin",
+          "pilot:sinh",
+          "pilot:tanh",
+          "pilot:asinh",
+          "pilot:absolute",
+          "pilot:erf",
+          "pilot:sinc",
+          "pilot:exp-integral",
+          "pilot:polylog",
+          "pilot:elliptic",
+          "pilot:bessel",
+          "pilot:digamma",
+          "pilot:poly-finite",
+          "pilot:trig-finite",
+          "pilot:odd-symmetry",
+          "pilot:reflection",
+          "pilot:abs-finite",
+          "pilot:floor-finite",
+          "pilot:endpoint-sqrt",
+          "pilot:endpoint-log",
+          "pilot:lorentz-line",
+          "pilot:gaussian-line",
+          "pilot:gaussian-half",
+          "pilot:sinc-half",
+          "pilot:fourier-lorentz",
+          "pilot:quartic-line",
+          "pilot:gamma-moment",
+          "pilot:beta-half",
+          "pilot:zeta-moment",
+          "pilot:dilog-value",
+          "pilot:elliptic-complete",
+          "pilot:cubic-cos-divergence",
+          "pilot:interior-pole",
+          "pilot:even-pole",
+          "pilot:endpoint-pole",
+          "pilot:tail-divergence",
+          "pilot:pv-simple",
+          "pilot:pv-cos-cubic",
+          "pilot:pv-double-diverges",
+          "pilot:circle-no-poles",
+          "pilot:circle-one",
+          "pilot:circle-multiple",
+          "pilot:circle-outside",
+          "pilot:circle-clockwise",
+          "pilot:circle-boundary",
+          "pilot:circle-double",
+          "pilot:circle-essential",
+          "pilot:circle-essential-times"
+        ],
+        "selection_seed": 20261003,
+        "isolation": "fresh process per case; wall budget includes startup and translation",
+        "verifier": "SymPy 1.14.0",
+        "independent_engine_verifier": true,
+        "memory_limit": "not-enforced",
+        "repeats": 1,
+        "comparison_warning": "Pilot timings only; parallel contention and one repetition preclude performance rankings",
+        "finished_utc": "2026-10-03T23:03:40.983771+00:00",
+        "completed": 68,
+        "recheck": {
+          "at_utc": "2026-10-03T23:05:42.344900+00:00",
+          "input_results_sha256": "c21306a278cdb04d550e7049eb188d64e99f2cae343630d1ddf6117f0c8c4608",
+          "verification_timeout_seconds": 20.0,
+          "previous_evidence": [
+            {
+              "id": "pilot:sinc-half",
+              "previous_verification": {
+                "verdict": "unverified",
+                "detail": "Unsupported operator Imaginary",
+                "wall_ms": 1543.331699911505
+              }
+            },
+            {
+              "id": "pilot:pv-cos-cubic",
+              "previous_verification": {
+                "verdict": "unverified",
+                "detail": "Unsupported operator Real",
+                "wall_ms": 1949.6124000288546
+              }
+            }
+          ],
+          "note": "Solver answers and timings unchanged; only selected verification rerun"
+        }
+      },
+      "families": {
+        "rational-polynomial": {
+          "attempted": 6,
+          "identity-checked": 3,
+          "solver:answer": 6,
+          "numerically-supported": 2,
+          "reference-match": 1
+        },
+        "algebraic-radicals": {
+          "attempted": 3,
+          "identity-checked": 3,
+          "solver:answer": 3
+        },
+        "algebraic-general": {
+          "attempted": 1,
+          "identity-checked": 1,
+          "solver:answer": 1
+        },
+        "exponential": {
+          "attempted": 3,
+          "identity-checked": 3,
+          "solver:answer": 3
+        },
+        "logarithmic": {
+          "attempted": 2,
+          "identity-checked": 2,
+          "solver:answer": 2
+        },
+        "exponential-logarithmic": {
+          "attempted": 2,
+          "identity-checked": 1,
+          "solver:answer": 1,
+          "not-solved": 1,
+          "solver:unevaluated": 1
+        },
+        "trigonometric": {
+          "attempted": 4,
+          "identity-checked": 3,
+          "solver:answer": 4,
+          "reference-match": 1
+        },
+        "inverse-trigonometric": {
+          "attempted": 2,
+          "identity-checked": 2,
+          "solver:answer": 2
+        },
+        "hyperbolic": {
+          "attempted": 2,
+          "identity-checked": 2,
+          "solver:answer": 2
+        },
+        "inverse-hyperbolic": {
+          "attempted": 1,
+          "identity-checked": 1,
+          "solver:answer": 1
+        },
+        "piecewise-absolute": {
+          "attempted": 2,
+          "identity-checked": 1,
+          "solver:answer": 2,
+          "reference-match": 1
+        },
+        "special-other": {
+          "attempted": 3,
+          "not-solved": 1,
+          "solver:unevaluated": 1,
+          "identity-checked": 2,
+          "solver:answer": 2
+        },
+        "hypergeometric-polylog": {
+          "attempted": 2,
+          "not-solved": 2,
+          "solver:unevaluated": 2
+        },
+        "elliptic": {
+          "attempted": 2,
+          "not-solved": 2,
+          "solver:unevaluated": 2
+        },
+        "bessel": {
+          "attempted": 1,
+          "not-solved": 1,
+          "solver:unevaluated": 1
+        },
+        "gamma-beta-zeta": {
+          "attempted": 4,
+          "not-solved": 2,
+          "solver:unevaluated": 2,
+          "reference-match": 2,
+          "solver:answer": 2
+        },
+        "definite-symmetry": {
+          "attempted": 2,
+          "reference-match": 2,
+          "solver:answer": 2
+        },
+        "piecewise-discrete": {
+          "attempted": 1,
+          "not-solved": 1,
+          "solver:unevaluated": 1
+        },
+        "improper-endpoints": {
+          "attempted": 6,
+          "reference-match": 1,
+          "solver:answer": 1,
+          "not-solved": 1,
+          "solver:unevaluated": 1,
+          "safe-rejection": 2,
+          "solver:undefined": 2,
+          "classification-match": 2,
+          "solver:divergent": 2
+        },
+        "improper-infinity": {
+          "attempted": 7,
+          "reference-match": 6,
+          "solver:answer": 6,
+          "classification-match": 1,
+          "solver:divergent": 1
+        },
+        "principal-value": {
+          "attempted": 3,
+          "not-solved": 2,
+          "solver:unsupported-kind": 2,
+          "numerically-supported": 1,
+          "solver:answer": 1
+        },
+        "contour-meromorphic": {
+          "attempted": 7,
+          "reference-match": 6,
+          "solver:answer": 6,
+          "classification-match": 1,
+          "solver:undefined": 1
+        },
+        "contour-essential": {
+          "attempted": 2,
+          "reference-match": 2,
+          "solver:answer": 2
+        }
+      },
+      "verdicts": {
+        "identity-checked": 24,
+        "numerically-supported": 3,
+        "not-solved": 13,
+        "reference-match": 22,
+        "safe-rejection": 2,
+        "classification-match": 4
+      },
+      "statuses": {
+        "answer": 49,
+        "unevaluated": 11,
+        "undefined": 3,
+        "divergent": 3,
+        "unsupported-kind": 2
+      },
+      "follow_up": [
+        {
+          "id": "pilot:reciprocal",
+          "family": "rational-polynomial",
+          "solver_status": "answer",
+          "verdict": "numerically-supported"
+        },
+        {
+          "id": "pilot:partial-fractions",
+          "family": "rational-polynomial",
+          "solver_status": "answer",
+          "verdict": "numerically-supported"
+        },
+        {
+          "id": "pilot:nested-exp",
+          "family": "exponential-logarithmic",
+          "solver_status": "unevaluated",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:erf",
+          "family": "special-other",
+          "solver_status": "unevaluated",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:polylog",
+          "family": "hypergeometric-polylog",
+          "solver_status": "unevaluated",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:elliptic",
+          "family": "elliptic",
+          "solver_status": "unevaluated",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:bessel",
+          "family": "bessel",
+          "solver_status": "unevaluated",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:digamma",
+          "family": "gamma-beta-zeta",
+          "solver_status": "unevaluated",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:floor-finite",
+          "family": "piecewise-discrete",
+          "solver_status": "unevaluated",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:endpoint-log",
+          "family": "improper-endpoints",
+          "solver_status": "unevaluated",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:zeta-moment",
+          "family": "gamma-beta-zeta",
+          "solver_status": "unevaluated",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:dilog-value",
+          "family": "hypergeometric-polylog",
+          "solver_status": "unevaluated",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:elliptic-complete",
+          "family": "elliptic",
+          "solver_status": "unevaluated",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:cubic-cos-divergence",
+          "family": "improper-endpoints",
+          "solver_status": "undefined",
+          "verdict": "safe-rejection"
+        },
+        {
+          "id": "pilot:interior-pole",
+          "family": "improper-endpoints",
+          "solver_status": "undefined",
+          "verdict": "safe-rejection"
+        },
+        {
+          "id": "pilot:pv-simple",
+          "family": "principal-value",
+          "solver_status": "unsupported-kind",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:pv-cos-cubic",
+          "family": "principal-value",
+          "solver_status": "answer",
+          "verdict": "numerically-supported"
+        },
+        {
+          "id": "pilot:pv-double-diverges",
+          "family": "principal-value",
+          "solver_status": "unsupported-kind",
+          "verdict": "not-solved"
+        }
+      ]
+    },
+    "sympy": {
+      "metadata": {
+        "schema_version": 1,
+        "engine": "sympy",
+        "engine_identity": {
+          "version": "1.14.0"
+        },
+        "started_utc": "2026-10-03T22:57:54.841805+00:00",
+        "platform": "Windows",
+        "architecture": "AMD64",
+        "python": "3.12.14",
+        "logical_cpus": 14,
+        "timeout_seconds": 30.0,
+        "verification_timeout_seconds": 20.0,
+        "jobs": 1,
+        "case_count": 68,
+        "corpus_sha256": "361b35a99eda67782c1abb802ba7fd0f2974b99f546ed71b7234ddc37317afbe",
+        "selected_ids": [
+          "pilot:polynomial",
+          "pilot:reciprocal",
+          "pilot:lorentz",
+          "pilot:partial-fractions",
+          "pilot:repeated-pole",
+          "pilot:sqrt",
+          "pilot:semicircle",
+          "pilot:radical-substitution",
+          "pilot:power-fraction",
+          "pilot:exponential",
+          "pilot:exponential-parts",
+          "pilot:gaussian",
+          "pilot:logarithm",
+          "pilot:log-square",
+          "pilot:exp-log",
+          "pilot:nested-exp",
+          "pilot:sin",
+          "pilot:cos-square",
+          "pilot:trig-substitution",
+          "pilot:arctan",
+          "pilot:arcsin",
+          "pilot:sinh",
+          "pilot:tanh",
+          "pilot:asinh",
+          "pilot:absolute",
+          "pilot:erf",
+          "pilot:sinc",
+          "pilot:exp-integral",
+          "pilot:polylog",
+          "pilot:elliptic",
+          "pilot:bessel",
+          "pilot:digamma",
+          "pilot:poly-finite",
+          "pilot:trig-finite",
+          "pilot:odd-symmetry",
+          "pilot:reflection",
+          "pilot:abs-finite",
+          "pilot:floor-finite",
+          "pilot:endpoint-sqrt",
+          "pilot:endpoint-log",
+          "pilot:lorentz-line",
+          "pilot:gaussian-line",
+          "pilot:gaussian-half",
+          "pilot:sinc-half",
+          "pilot:fourier-lorentz",
+          "pilot:quartic-line",
+          "pilot:gamma-moment",
+          "pilot:beta-half",
+          "pilot:zeta-moment",
+          "pilot:dilog-value",
+          "pilot:elliptic-complete",
+          "pilot:cubic-cos-divergence",
+          "pilot:interior-pole",
+          "pilot:even-pole",
+          "pilot:endpoint-pole",
+          "pilot:tail-divergence",
+          "pilot:pv-simple",
+          "pilot:pv-cos-cubic",
+          "pilot:pv-double-diverges",
+          "pilot:circle-no-poles",
+          "pilot:circle-one",
+          "pilot:circle-multiple",
+          "pilot:circle-outside",
+          "pilot:circle-clockwise",
+          "pilot:circle-boundary",
+          "pilot:circle-double",
+          "pilot:circle-essential",
+          "pilot:circle-essential-times"
+        ],
+        "selection_seed": 20261003,
+        "isolation": "fresh process per case; wall budget includes startup and translation",
+        "verifier": "SymPy 1.14.0",
+        "independent_engine_verifier": false,
+        "memory_limit": "not-enforced",
+        "repeats": 1,
+        "comparison_warning": "Pilot timings only; parallel contention and one repetition preclude performance rankings",
+        "finished_utc": "2026-10-03T23:03:20.243326+00:00",
+        "completed": 68
+      },
+      "families": {
+        "rational-polynomial": {
+          "attempted": 6,
+          "identity-checked": 5,
+          "solver:answer": 6,
+          "reference-match": 1
+        },
+        "algebraic-radicals": {
+          "attempted": 3,
+          "identity-checked": 3,
+          "solver:answer": 3
+        },
+        "algebraic-general": {
+          "attempted": 1,
+          "identity-checked": 1,
+          "solver:answer": 1
+        },
+        "exponential": {
+          "attempted": 3,
+          "identity-checked": 3,
+          "solver:answer": 3
+        },
+        "logarithmic": {
+          "attempted": 2,
+          "identity-checked": 2,
+          "solver:answer": 2
+        },
+        "exponential-logarithmic": {
+          "attempted": 2,
+          "identity-checked": 2,
+          "solver:answer": 2
+        },
+        "trigonometric": {
+          "attempted": 4,
+          "identity-checked": 3,
+          "solver:answer": 4,
+          "reference-match": 1
+        },
+        "inverse-trigonometric": {
+          "attempted": 2,
+          "identity-checked": 2,
+          "solver:answer": 2
+        },
+        "hyperbolic": {
+          "attempted": 2,
+          "identity-checked": 2,
+          "solver:answer": 2
+        },
+        "inverse-hyperbolic": {
+          "attempted": 1,
+          "identity-checked": 1,
+          "solver:answer": 1
+        },
+        "piecewise-absolute": {
+          "attempted": 2,
+          "not-solved": 1,
+          "solver:conditional": 1,
+          "reference-match": 1,
+          "solver:answer": 1
+        },
+        "special-other": {
+          "attempted": 3,
+          "identity-checked": 3,
+          "solver:answer": 3
+        },
+        "hypergeometric-polylog": {
+          "attempted": 2,
+          "not-solved": 1,
+          "solver:answer-untranslated": 1,
+          "reference-match": 1,
+          "solver:answer": 1
+        },
+        "elliptic": {
+          "attempted": 2,
+          "identity-checked": 1,
+          "solver:answer": 2,
+          "reference-match": 1
+        },
+        "bessel": {
+          "attempted": 1,
+          "identity-checked": 1,
+          "solver:answer": 1
+        },
+        "gamma-beta-zeta": {
+          "attempted": 4,
+          "not-solved": 2,
+          "solver:unevaluated": 2,
+          "reference-match": 2,
+          "solver:answer": 2
+        },
+        "definite-symmetry": {
+          "attempted": 2,
+          "reference-match": 2,
+          "solver:answer": 2
+        },
+        "piecewise-discrete": {
+          "attempted": 1,
+          "not-solved": 1,
+          "solver:unevaluated": 1
+        },
+        "improper-endpoints": {
+          "attempted": 6,
+          "reference-match": 2,
+          "solver:answer": 2,
+          "not-solved": 1,
+          "solver:unevaluated": 1,
+          "safe-rejection": 1,
+          "solver:undefined": 1,
+          "classification-match": 2,
+          "solver:divergent": 2
+        },
+        "improper-infinity": {
+          "attempted": 7,
+          "reference-match": 5,
+          "solver:answer": 6,
+          "numerically-supported": 1,
+          "classification-match": 1,
+          "solver:divergent": 1
+        },
+        "principal-value": {
+          "attempted": 3,
+          "reference-match": 1,
+          "solver:answer": 1,
+          "not-solved": 1,
+          "solver:unevaluated": 1,
+          "classification-match": 1,
+          "solver:divergent": 1
+        },
+        "contour-meromorphic": {
+          "attempted": 7,
+          "not-solved": 7,
+          "solver:unsupported-kind": 7
+        },
+        "contour-essential": {
+          "attempted": 2,
+          "not-solved": 2,
+          "solver:unsupported-kind": 2
+        }
+      },
+      "verdicts": {
+        "identity-checked": 29,
+        "not-solved": 16,
+        "reference-match": 17,
+        "numerically-supported": 1,
+        "safe-rejection": 1,
+        "classification-match": 4
+      },
+      "statuses": {
+        "answer": 47,
+        "conditional": 1,
+        "answer-untranslated": 1,
+        "unevaluated": 5,
+        "undefined": 1,
+        "divergent": 4,
+        "unsupported-kind": 9
+      },
+      "follow_up": [
+        {
+          "id": "pilot:absolute",
+          "family": "piecewise-absolute",
+          "solver_status": "conditional",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:polylog",
+          "family": "hypergeometric-polylog",
+          "solver_status": "answer-untranslated",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:digamma",
+          "family": "gamma-beta-zeta",
+          "solver_status": "unevaluated",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:floor-finite",
+          "family": "piecewise-discrete",
+          "solver_status": "unevaluated",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:fourier-lorentz",
+          "family": "improper-infinity",
+          "solver_status": "answer",
+          "verdict": "numerically-supported"
+        },
+        {
+          "id": "pilot:zeta-moment",
+          "family": "gamma-beta-zeta",
+          "solver_status": "unevaluated",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:cubic-cos-divergence",
+          "family": "improper-endpoints",
+          "solver_status": "unevaluated",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:interior-pole",
+          "family": "improper-endpoints",
+          "solver_status": "undefined",
+          "verdict": "safe-rejection"
+        },
+        {
+          "id": "pilot:pv-cos-cubic",
+          "family": "principal-value",
+          "solver_status": "unevaluated",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:circle-no-poles",
+          "family": "contour-meromorphic",
+          "solver_status": "unsupported-kind",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:circle-one",
+          "family": "contour-meromorphic",
+          "solver_status": "unsupported-kind",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:circle-multiple",
+          "family": "contour-meromorphic",
+          "solver_status": "unsupported-kind",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:circle-outside",
+          "family": "contour-meromorphic",
+          "solver_status": "unsupported-kind",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:circle-clockwise",
+          "family": "contour-meromorphic",
+          "solver_status": "unsupported-kind",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:circle-boundary",
+          "family": "contour-meromorphic",
+          "solver_status": "unsupported-kind",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:circle-double",
+          "family": "contour-meromorphic",
+          "solver_status": "unsupported-kind",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:circle-essential",
+          "family": "contour-essential",
+          "solver_status": "unsupported-kind",
+          "verdict": "not-solved"
+        },
+        {
+          "id": "pilot:circle-essential-times",
+          "family": "contour-essential",
+          "solver_status": "unsupported-kind",
+          "verdict": "not-solved"
+        }
+      ]
+    }
+  },
+  "inventory_revision": "871364f2923d6684d45470a91d7584ca162d0723",
+  "scope": "Single-variable pilot. Broader taxonomy rows are targets, not implemented coverage."
+}
