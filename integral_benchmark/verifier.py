@@ -4,11 +4,15 @@ import json
 import sys
 import sympy as s
 from .expressions import to_sympy, TranslationError, symbols, parse
+from .assumptions import context
 
 
 def verify(case, result):
     expected = case["expected"]
     status = result["status"]
+    if status == 'conditional':
+        return {'verdict': 'conditional-unverified',
+                'detail': 'Returned conditions retained; domain implication/completeness not certified'}
     if expected["status"] in {"divergent", "undefined"}:
         if status == expected["status"]:
             return {"verdict": "classification-match", "detail": "Matches curated semantic classification, not a solver proof"}
@@ -19,10 +23,10 @@ def verify(case, result):
             return {"verdict": "safe-rejection", "detail": "No finite answer, but divergence not explicitly classified"}
         return {"verdict": "not-solved"}
     if status != "answer": return {"verdict": "not-solved"}
-    if case["assumptions"]: return {"verdict": "unverified", "detail": "Assumption checker not implemented"}
     try:
-        domains = case["domains"]
-        answer = to_sympy(result["answer"], domains)
+        domains, condition = context(case)
+        obligations = list(result.get('input_branch_warnings', []))
+        answer = to_sympy(result["answer"], domains, obligations)
         if case["kind"] == "indefinite":
             f = to_sympy(case["integrand"], domains)
             x = to_sympy(case["variable"], domains)
@@ -35,16 +39,27 @@ def verify(case, result):
             return {"verdict": "unverified", "detail": "Nonfinite residual"}
         exact = s.simplify(residual)
         if exact == 0:
+            if obligations:
+                return {'verdict': 'identity-checked-restricted' if case['kind'] == 'indefinite' else 'unverified',
+                        'branch_obligations': obligations,
+                        'detail': 'Local principal-branch comparison only; not full-domain correctness'}
             if case["kind"] == "indefinite":
-                return {"verdict": "identity-checked", "detail": "Derivative identity on common differentiable domain; global branch/domain completeness not certified"}
+                return {"verdict": "identity-checked", "detail": "Derivative identity on common differentiable domain; global branch/domain completeness not certified",
+                        'assumptions_status': case.get('assumptions_status', 'explicit-case-contract'),
+                        'parameter_completeness': 'not-certified' if case.get('parameters') else 'not-applicable'}
             return {"verdict": "reference-match" if expected["trust"] == "curated-reference" else "reference-match-unreviewed",
                     "detail": "Exact equality to reference; convergence and reference validity are separate obligations"}
+        if obligations:
+            return {'verdict': 'unverified', 'branch_obligations': obligations,
+                    'detail': 'Branch-restricted symbolic comparison unresolved; no unrestricted sampling'}
         if case.get("parameters") or (case["kind"] == "indefinite" and set(symbols(case["integrand"])) - {case["variable"]}):
             return {"verdict": "unverified", "detail": "Parameterized residual not symbolically resolved; no arbitrary parameter sampling"}
         points = case.get("sample_points", []) if case["kind"] == "indefinite" else [None]
         if not points: return {"verdict": "unverified", "detail": "No domain-reviewed sample points"}
         checked, failures = 0, []
         for point in points:
+            if point is not None and condition.subs(x, to_sympy(parse(point))) is not s.true:
+                continue
             r = residual if point is None else residual.subs(x, to_sympy(parse(point)))
             if r.free_symbols: continue
             values = []

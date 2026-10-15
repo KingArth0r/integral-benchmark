@@ -1,66 +1,33 @@
 import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { performance } from 'node:perf_hooks';
+import { input, output, inputBranchWarnings } from './ce-expressions.mjs';
 
 // CE source or a published ESM bundle is selected externally, never from case data.
-const { ComputeEngine } = await import(pathToFileURL(process.env.CE_MODULE).href);
-const aliases = { Log: 'Ln', Si: 'SinIntegral', Ci: 'CosIntegral', Ei: 'ExpIntegralEi',
-  LambertW: 'ProductLog', Hypergeometric: 'HypergeometricPFQ',
-  ExpIntegral: 'ExpIntegralE' };
-const reverse = Object.fromEntries(Object.entries(aliases).map(([a, b]) => [b, a]));
-const accepted = new Set(['Add', 'Subtract', 'Multiply', 'Divide', 'Rational', 'Negate', 'Power',
-  'Complex', 'Tuple', 'Sin', 'Cos', 'Tan', 'Cot', 'Sec', 'Csc', 'Arcsin', 'Arccos', 'Arctan',
-  'Arccot', 'Arcsec', 'Arccsc', 'Sinh', 'Cosh', 'Tanh', 'Coth', 'Sech', 'Csch', 'Arsinh',
-  'Arcosh', 'Artanh', 'Arcoth', 'Arsech', 'Arcsch', 'Log', 'Exp', 'Sqrt', 'Abs', 'Erf',
-  'Erfc', 'Erfi', 'Ei', 'Si', 'Ci', 'Gamma', 'Beta', 'Zeta', 'PolyLog', 'PolyGamma',
-  'LambertW', 'BesselJ', 'BesselY', 'BesselI', 'BesselK', 'EllipticF', 'EllipticE',
-  'EllipticK', 'EllipticPi', 'Floor', 'Ceiling', 'Sign', 'Min', 'Max', 'FresnelS', 'FresnelC']);
-
-function input(x) {
-  if (Array.isArray(x)) {
-    if (!accepted.has(x[0])) throw new Error(`Unsupported input operator ${x[0]}`);
-    return [aliases[x[0]] ?? x[0], ...x.slice(1).map(input)];
-  }
-  if (x && typeof x === 'object') {
-    if ('decimal' in x) throw new Error('Exact decimal input not implemented in CE adapter');
-    throw new Error('Unsupported input object');
-  }
-  if (typeof x === 'number' && !Number.isSafeInteger(x)) throw new Error('Integer exceeds JavaScript exact range');
-  return x;
-}
-function output(x) {
-  if (Array.isArray(x)) return [reverse[x[0]] ?? x[0], ...x.slice(1).map(output)];
-  if (x && typeof x === 'object') {
-    if ('num' in x) {
-      if (/^[+-]?\d+$/.test(String(x.num)) && Number.isSafeInteger(Number(x.num))) return Number(x.num);
-      return { decimal: String(x.num) };
-    }
-    if ('sym' in x) return x.sym;
-    if ('fn' in x) return output(x.fn);
-    throw new Error('Unsupported CE result object');
-  }
-  if (typeof x === 'number' && !Number.isInteger(x)) return { decimal: String(x) };
-  return x;
-}
+let ce;
 function contains(x, names) {
   return Array.isArray(x) && (names.includes(x[0]) || x.slice(1).some(a => contains(a, names)));
 }
 
+let rulesReport;
 async function solve(c) {
-  if (c.assumptions.length) return { status: 'unsupported-assumptions' };
   if (c.kind === 'numerical') return { status: 'unsupported-kind' };
-  const ce = new ComputeEngine();
+  const assume = predicate => {
+    const status = ce.assume(predicate);
+    if (!['ok', 'tautology'].includes(status)) throw new Error(`Assumption rejected: ${status}`);
+  };
   // Domain assumptions must reach the solver, not just the answer checker.
-  for (const [name, domain] of Object.entries(c.domains)) {
-    if (domain === 'real') ce.assume(['Element', name, 'RealNumbers']);
-    else if (domain === 'positive') {
-      ce.assume(['Element', name, 'RealNumbers']);
-      ce.assume(['Greater', name, 0]);
-    } else if (domain !== 'complex') return { status: 'unsupported-assumptions' };
-  }
-  if (process.env.CE_RULES_MODULE) {
-    const { loadIntegrationRules } = await import(pathToFileURL(process.env.CE_RULES_MODULE).href);
-    loadIntegrationRules(ce);
+  try {
+    for (const [name, domain] of Object.entries(c.domains)) {
+      if (domain === 'real') assume(['Element', name, 'RealNumbers']);
+      else if (domain === 'positive') {
+        assume(['Element', name, 'RealNumbers']);
+        assume(['Greater', name, 0]);
+      } else if (domain !== 'complex') return { status: 'unsupported-assumptions' };
+    }
+    for (const predicate of c.assumptions) assume(input(predicate));
+  } catch (e) {
+    return { status: 'unsupported-assumptions', reason: e.message };
   }
   let f, bounds;
   try { f = input(c.integrand); bounds = c.bounds?.map(input); }
@@ -92,17 +59,49 @@ async function solve(c) {
     result = report.value;
   }
   const answer = result.json;
-  const common = { solver_ms, answer_text: JSON.stringify(answer) };
+  const common = { solver_ms, answer_text: JSON.stringify(answer),
+    input_branch_warnings: inputBranchWarnings(c.integrand, c.domains) };
   if (contains(answer, ['Integrate', 'ContourIntegrate'])) return { ...common, status: 'unevaluated' };
   if (result.isNaN) return { ...common, status: 'undefined' };
   if (contains(answer, ['Error'])) return { ...common, status: 'error' };
   if (answer === 'PositiveInfinity' || answer === 'NegativeInfinity') return { ...common, status: 'divergent' };
-  return { ...common, status: 'answer', answer: output(answer) };
+  try {
+    const translated = output(answer);
+    if (contains(answer, ['ConditionalExpression'])) return { ...common,
+      status: 'conditional', answer: translated,
+      reason: 'Condition retained; not an unconditional answer' };
+    return { ...common, status: 'answer', answer: translated };
+  } catch (e) {
+    return { ...common, status: 'answer-untranslated', reason: e.message };
+  }
 }
 
+const phased = process.env.CE_PHASED === '1';
+let ready = false;
 try {
+  const start = performance.now();
+  const { ComputeEngine } = await import(pathToFileURL(process.env.CE_MODULE).href);
+  ce = new ComputeEngine();
+  if (process.env.CE_RULES_MODULE) {
+    const { loadIntegrationRules } = await import(pathToFileURL(process.env.CE_RULES_MODULE).href);
+    const rulesStart = performance.now();
+    const options = { stepBudget: Number(process.env.CE_STEP_BUDGET ?? 300000),
+      timeLimitMs: Number(process.env.CE_RULE_TIME_MS ?? 120000) };
+    const report = loadIntegrationRules(ce, options);
+    rulesReport = { rule_count: report.ruleCount, skipped: report.skipped,
+      skipped_rules: report.skippedRules, load_ms: performance.now() - rulesStart, options };
+  }
+  // Compile before case-specific assumptions. Never reuse this engine for another case.
+  if (phased) console.log(JSON.stringify({ event: 'ready', initialization_ms: performance.now() - start,
+    ...(rulesReport ? { rules: rulesReport } : {}) }));
+  ready = true;
   const request = JSON.parse(readFileSync(0, 'utf8'));
-  console.log(JSON.stringify(await solve(request.case)));
+  const result = await solve(request.case);
+  const response = { ...result, ...(rulesReport ? { rules: rulesReport } : {}) };
+  console.log(JSON.stringify(phased ? { event: 'result', result: response } : response));
 } catch (e) {
-  console.log(JSON.stringify({ status: 'error', reason: `${e.name}: ${e.message}` }));
+  const result = { status: 'error', reason: `${e.name}: ${e.message}`,
+    ...(rulesReport ? { rules: rulesReport } : {}) };
+  console.log(JSON.stringify(phased ? (ready ? { event: 'result', result } :
+    { event: 'setup-error', reason: result.reason }) : result));
 }

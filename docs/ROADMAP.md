@@ -12,13 +12,18 @@ interchange format, bounded solver runner, initial CE and SymPy adapters,
 conservative verifier, and measured pilot map. Keep the project independent of
 CE's release cycle and avoid adding thousands of expensive cases to its unit tests.
 
-## Build the audited core
+## Account for every problem in each source
 
-Target 500 to 1000 reviewed cases spanning every single-variable family, with
-balanced definite and indefinite sections and explicit negative cases. Include
+The acquisition target is every integration problem and subpart in each chosen
+contest archive, textbook edition, and table, not a fixed number of representative
+examples. Maintain a source ledger with expected problem counts and one status per
+problem: located, transcribed, translated, awaiting rights review, awaiting answer
+review, runnable, or blocked with a reason. Version sources by year, round, edition,
+and source checksum. An unverified answer does not justify omitting the problem.
+
+Review and execution may proceed in batches without shrinking that scope. Include
 parameter boundaries, removable singularities, branch discontinuities, endpoints,
-real-axis poles, and cases where no elementary antiderivative exists but a special
-function answer does. Record what answer classes are acceptable.
+real-axis poles, and special-function answers. Record acceptable answer classes.
 
 Maintain source manifests for MIT, Berkeley, HMMT, and JEE. Separate qualifying
 rounds from finals, distinguish similarly named Berkeley contests, and preserve
@@ -33,7 +38,8 @@ Preserve unsupported syntax and upstream omissions as measurable acquisition gap
 Add licensed or public-domain integral tables, special-function references, and
 complex-analysis collections after source-specific permission review.
 
-Prioritize missing families instead of multiplying easy templates. Generated
+Prioritize acquisition of missing sources and families without discarding any
+problem from already acquired sources. Generated
 reverse-differentiation cases are useful but have a biased distribution; pair them
 with independently constructed definite problems and adversarial near-misses.
 
@@ -61,3 +67,10 @@ identity recognition, integration algorithm, special-function support, assumptio
 limits/convergence, or verification. Confirm each diagnosis with a minimized
 reproduction before opening an implementation task. An unverified answer is not
 evidence that CE lacks the integration algorithm.
+
+Retain every reproducible CE failure as a permanent regression problem, with its
+original source and a linked minimized example where useful. Do the same for other
+CASes. Link duplicates instead of losing provenance. Report source-balanced scores
+and failure-driven regression scores separately so targeted additions cannot be
+mistaken for a representative population. Run default CE and CE with bundled Rubi
+as distinct configurations before diagnosing missing integration algorithms.

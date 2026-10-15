@@ -19,6 +19,8 @@ def main():
     run.add_argument("--engine", required=True)
     run.add_argument("--timeout", type=float, default=10)
     run.add_argument("--verify-timeout", type=float, default=5)
+    run.add_argument('--setup-timeout', type=float, default=120, help='Separate CE engine/rule loading budget')
+    run.add_argument('--rule-step-budget', type=int, default=300000)
     run.add_argument("--jobs", type=int, default=1)
     run.add_argument("--limit", type=int)
     run.add_argument("--seed", type=int, default=20261003)
@@ -26,6 +28,9 @@ def main():
     run.add_argument("--ce-module", help="Fresh ESM bundle built from the recorded CE checkout")
     run.add_argument("--node", default="node")
     run.add_argument("--rules", action="store_true")
+    run.add_argument("--ce-rules-module", help="Fresh ESM bundle of CE's optional integration rules")
+    run.add_argument("--resume", action="store_true", help="Resume identical configuration without rerunning recorded cases")
+    run.add_argument("--batch-size", type=int, help="Maximum NEW cases this invocation; selection still covers the whole corpus")
     run.add_argument("--command-json")
     report = commands.add_parser("report", help="Build a coverage map including unmeasured families")
     report.add_argument("--corpus", default="corpus/pilot.jsonl")
@@ -47,11 +52,14 @@ def main():
         result = scan(args.upstream, args.output, args.import_suite, args.include_review)
         print(json.dumps({k: result[k] for k in ("revision", "raw_records", "translated_unique_structural_cases", "duplicate_records", "suites")}, indent=2))
     elif args.command == "run":
-        if args.jobs < 1 or args.timeout <= 0 or args.verify_timeout <= 0 or (args.limit is not None and args.limit < 1):
+        if args.jobs < 1 or args.timeout <= 0 or args.verify_timeout <= 0 or (args.limit is not None and args.limit < 1) or (args.batch_size is not None and args.batch_size < 1):
             parser.error("Budgets, jobs, and limits must be positive")
+        if args.ce_rules_module and not args.rules:
+            parser.error('--ce-rules-module requires --rules')
         from .runner import run
         run(args.corpus, args.output, args.engine, args.timeout, args.verify_timeout,
-            args.jobs, args.limit, args.ce_root, args.node, args.command_json, args.rules, args.seed, args.ce_module)
+            args.jobs, args.limit, args.ce_root, args.node, args.command_json, args.rules, args.seed, args.ce_module,
+            args.ce_rules_module, args.resume, args.batch_size, args.setup_timeout, args.rule_step_budget)
     elif args.command == "report":
         from .report import generate
         generate(args.corpus, args.inventory, args.run, args.output)

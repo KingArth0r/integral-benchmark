@@ -24,6 +24,11 @@ def generate(corpus, inventory, runs, output):
             counts[r["verification"]["verdict"]] += 1
             counts["solver:" + r["result"]["status"]] += 1
         results[key] = {"metadata": meta, "families": dict(by_family),
+                        'selected': meta.get('case_count', len(records)), 'completed': len(records),
+                        'remaining': meta.get('case_count', len(records)) - len(records),
+                        'assumption_strata': {label: dict(Counter(r['verification']['verdict'] for r in records
+                            if r.get('assumptions_status', 'legacy-unrecorded') == label))
+                            for label in sorted({r.get('assumptions_status', 'legacy-unrecorded') for r in records})},
                         "verdicts": dict(Counter(r["verification"]["verdict"] for r in records)),
                         "statuses": dict(Counter(r["result"]["status"] for r in records)),
                         "follow_up": [{"id": r.get("id", "unknown"), "family": r["family"],
@@ -38,16 +43,16 @@ def generate(corpus, inventory, runs, output):
                          "series-products", "non-elementarity", "multivariate", "numerical"}
     for family in taxonomy:
         id = family["id"]
-        rows.append({**family, "pilot_cases": curated[id],
+        rows.append({**family, "pilot_cases": curated[id], 'corpus_cases': curated[id],
                      "inventory_records": None if id in semantic_families else inventory.get("families", {}).get(id, {}).get("inventory_records", 0),
                      "engines": {key: value["families"].get(id, {}) for key, value in results.items()}})
     report = {"schema_version": 1, "title": "Integral Benchmark coverage map",
               "families": rows, "runs": results, "inventory_revision": inventory.get("revision"),
-              "scope": "Single-variable pilot. Broader taxonomy rows are targets, not implemented coverage."}
+              "scope": "All supplied corpus cases; consult each run's selected/completed/remaining counts. Unmeasured taxonomy rows are targets."}
     output = Path(output)
     write_json(output / "coverage.json", report)
     lines = ["# Integral Benchmark coverage map", "",
-             "This map separates source inventory, runnable pilot coverage, and observed solver outcomes. "
+             "This map separates source inventory, runnable corpus coverage, and observed solver outcomes. "
              "It is not a ranking of overall CAS capability. Zero cases means an unmeasured gap, not solver failure.", "",
              "## Source inventory", "",
              f"Pinned upstream revision: `{inventory.get('revision', 'not inventoried')}`. "
@@ -66,7 +71,7 @@ def generate(corpus, inventory, runs, output):
               "equality to a curated reference, or an explicit classification match. These are different "
               "evidence levels, not formal global proofs. Numerical support and safe rejection are reported "
               "separately below and excluded from this count. All attempted cases remain in the denominator.", "",
-              "| Family | Inventory records | Pilot cases | " + " | ".join(results) + " |",
+              "| Family | Inventory records | Corpus cases | " + " | ".join(results) + " |",
               "|---|---:|---:|" + "---:|" * len(results)]
     checked_types = ("identity-checked", "reference-match", "classification-match")
     for row in rows:
@@ -83,15 +88,19 @@ def generate(corpus, inventory, runs, output):
         lines += ["", "| Solver or adapter outcome | Cases |", "|---|---:|"]
         for status, count in sorted(result["statuses"].items()): lines.append(f"| {status} | {count} |")
         m = result["metadata"]
+        lines += ['', f"Selected: {result['selected']:,}; completed: {result['completed']:,}; remaining: {result['remaining']:,}.", '']
         lines += ["", f"Engine identity: `{json.dumps(m['engine_identity'], sort_keys=True)}`. "
-                  f"Budget {m['timeout_seconds']} seconds per fresh solver process, "
+                  f"Budget {m['timeout_seconds']} seconds per solve, "
+                  f"setup budget {m.get('setup_timeout_seconds', 'included in process budget')} seconds, "
                   f"{m['verification_timeout_seconds']} seconds per verifier; {m['jobs']} parallel jobs. "
                   f"Verifier independent of solver engine: {m['independent_engine_verifier']}.", ""]
         lines += ["Cases requiring follow-up are not automatically solver bugs. An unsupported kind "
                   "can be an adapter limitation, and a numerical-only check can be a verifier limitation.", "",
                   "| Case | Solver outcome | Verification |", "|---|---|---|"]
-        for item in result["follow_up"]:
+        for item in result["follow_up"][:100]:
             lines.append(f"| {item['id']} | {item['solver_status']} | {item['verdict']} |")
+        if len(result['follow_up']) > 100:
+            lines += ['', 'Table abbreviated to 100 rows; **all** follow-up records are in coverage.json.']
         lines.append("")
     lines += ["## Next coverage targets", "",
               "1. Audit parameter domains and branches before treating the large imported corpus as a gold set.",

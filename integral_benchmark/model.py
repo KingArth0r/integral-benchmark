@@ -71,8 +71,8 @@ def write_json(path, obj):
 
 def infer_family(expr, kind="indefinite"):
     h = set(heads(expr))
-    if "Floor" in h or "Ceiling" in h: return "piecewise-discrete"
-    if "Abs" in h or "Sign" in h: return "piecewise-absolute"
+    if h & {"Floor", "Ceiling", "FractionalPartFloor"}: return "piecewise-discrete"
+    if h & {"Abs", "Sign", "Min", "Max"}: return "piecewise-absolute"
     if h & {"EllipticF", "EllipticE", "EllipticK", "EllipticPi"}: return "elliptic"
     if h & {"BesselJ", "BesselY", "BesselI", "BesselK"}: return "bessel"
     if h & {"Gamma", "Beta", "Zeta", "PolyGamma", "Digamma"}: return "gamma-beta-zeta"
