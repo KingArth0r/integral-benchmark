@@ -9,12 +9,13 @@ from pathlib import Path
 import subprocess
 import threading
 from .checkpoint import atomic_json, writer_lock
-from .model import load_cases, digest
+from .model import PreparedCorpus, digest
 from .runner import run, harness_digest
 
 
-def audit(corpus, inventory, expected_count):
-    cases = load_cases(corpus)
+def audit(corpus, inventory, expected_count, prepared=None):
+    prepared = prepared or PreparedCorpus.load(corpus)
+    cases, corpus_hash = prepared.for_path(corpus)
     source = json.loads(Path(inventory).read_text(encoding='utf-8'))
     rubi = source['suites']['rubi']
     if len(cases) != expected_count:
@@ -25,7 +26,7 @@ def audit(corpus, inventory, expected_count):
         raise ValueError('Corpus source/revision mismatch')
     return {'runnable_cases_per_configuration': len(cases),
             'source_records': rubi['records'], 'translation_failures': rubi['translation_failed'],
-            'source_revision': source['revision'], 'corpus_sha256': digest(cases),
+            'source_revision': source['revision'], 'corpus_sha256': corpus_hash,
             'inventory_sha256': hashlib.sha256(Path(inventory).read_bytes()).hexdigest(),
             'assumptions_review_required': sum(c.get('assumptions_status') == 'not-specified-upstream' for c in cases),
             'parameter_cases': sum(bool(c.get('parameters')) for c in cases)}
@@ -40,6 +41,8 @@ def main():
     parser.add_argument('--timeout', type=float, default=120)
     parser.add_argument('--setup-timeout', type=float, default=120)
     parser.add_argument('--verify-timeout', type=float, default=20)
+    parser.add_argument('--verifier-mode', choices=['fresh', 'warm'], default='fresh')
+    parser.add_argument('--verifier-recycle', type=int, default=100)
     parser.add_argument('--rule-step-budget', type=int, default=300000)
     parser.add_argument('--node', default='node')
     parser.add_argument('--resume', action='store_true')
@@ -50,7 +53,8 @@ def main():
         setattr(args, key, str(Path(getattr(args, key)).resolve()))
     if subprocess.check_output(['git', '-C', args.ce_root, 'status', '--porcelain'], text=True).strip():
         raise ValueError('Full baselines require a clean, pinned CE checkout')
-    accounting = audit(args.corpus, args.inventory, args.expected_count)
+    prepared = PreparedCorpus.load(args.corpus)
+    accounting = audit(args.corpus, args.inventory, args.expected_count, prepared)
     config = {k: v for k, v in vars(args).items() if k != 'resume'}
     config['accounting'] = accounting
     config['harness_sha256'] = harness_digest()
@@ -83,7 +87,9 @@ def main():
                     jobs=args.jobs, ce_root=args.ce_root, node=args.node, rules=rules,
                     ce_module=args.ce_module, ce_rules_module=args.ce_rules_module if rules else None,
                     resume=args.resume and (output/'run.json').exists(), setup_timeout=args.setup_timeout,
-                    rule_step_budget=args.rule_step_budget, stop_event=stop_event)
+                    rule_step_budget=args.rule_step_budget, stop_event=stop_event,
+                    prepared_corpus=prepared, verifier_mode=args.verifier_mode,
+                    verifier_recycle=args.verifier_recycle)
             except BaseException:
                 stop_event.set()
                 raise
@@ -97,7 +103,8 @@ def main():
                 futures = {name: pool.submit(execute, rules) for name, rules in [('ce', False), ('ce-rubi', True)]}
                 state['results'] = {name: future.result() for name, future in futures.items()}
             from .report import generate
-            generate(args.corpus, args.inventory, [root/'ce', root/'ce-rubi'], root/'coverage')
+            generate(args.corpus, args.inventory, [root/'ce', root/'ce-rubi'], root/'coverage',
+                     prepared_corpus=prepared)
             state['status'] = 'complete'
             state['finished_utc'] = datetime.now(timezone.utc).isoformat()
         except BaseException as exc:

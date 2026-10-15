@@ -6,8 +6,8 @@ from pathlib import Path
 from .model import ROOT, load_cases, write_json
 
 
-def generate(corpus, inventory, runs, output):
-    cases = load_cases(corpus)
+def generate(corpus, inventory, runs, output, prepared_corpus=None):
+    cases = prepared_corpus.for_path(corpus)[0] if prepared_corpus else load_cases(corpus)
     taxonomy = json.loads(Path(__file__).with_name("taxonomy.json").read_text())
     inventory = json.loads(Path(inventory).read_text()) if inventory else {}
     results = {}

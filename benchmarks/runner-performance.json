@@ -1,0 +1,15 @@
+{
+  "python": "3.12.14",
+  "platform": "Windows",
+  "scope": "Synthetic derivative-check fixture; not corpus coverage or an end-to-end speed claim",
+  "contention": "The original full baseline was running; measurements are local and not controlled serial CAS comparisons",
+  "verifier_recycle": 100,
+  "fresh_ms": [3010.254000000714, 4015.7771999947727, 2859.926999997697, 2767.523700000311, 3397.6442999992287, 3164.191200005007],
+  "warm_ms_including_first_startup": [3864.369099996111, 6.513000000268221, 5.54790000023786, 5.185999994864687, 5.338900002243463, 4.676199998357333],
+  "ordering": "Alternating fresh/warm then warm/fresh; one warm worker reused for all six requests; symbolic caches cleared each request",
+  "total_ms": {"fresh": 19215.31739999773, "warm": 3891.6310999920825},
+  "completed_prefix_observations_not_coverage_estimates": {
+    "ce": {"completed": 310, "median_setup_ms": 1148.1898499987437, "median_verification_ms": 3081.4766000039526, "verified_attempts_timed": 173},
+    "ce_rubi": {"completed": 104, "median_setup_ms": 11139.308549998532, "median_verification_ms": 3063.7708499962173, "verified_attempts_timed": 104}
+  }
+}

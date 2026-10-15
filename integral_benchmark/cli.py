@@ -21,6 +21,8 @@ def main():
     run.add_argument("--verify-timeout", type=float, default=5)
     run.add_argument('--setup-timeout', type=float, default=120, help='Separate CE engine/rule loading budget')
     run.add_argument('--rule-step-budget', type=int, default=300000)
+    run.add_argument('--verifier-mode', choices=['fresh', 'warm'], default='fresh')
+    run.add_argument('--verifier-recycle', type=int, default=100)
     run.add_argument("--jobs", type=int, default=1)
     run.add_argument("--limit", type=int)
     run.add_argument("--seed", type=int, default=20261003)
@@ -59,7 +61,8 @@ def main():
         from .runner import run
         run(args.corpus, args.output, args.engine, args.timeout, args.verify_timeout,
             args.jobs, args.limit, args.ce_root, args.node, args.command_json, args.rules, args.seed, args.ce_module,
-            args.ce_rules_module, args.resume, args.batch_size, args.setup_timeout, args.rule_step_budget)
+            args.ce_rules_module, args.resume, args.batch_size, args.setup_timeout, args.rule_step_budget,
+            verifier_mode=args.verifier_mode, verifier_recycle=args.verifier_recycle)
     elif args.command == "report":
         from .report import generate
         generate(args.corpus, args.inventory, args.run, args.output)

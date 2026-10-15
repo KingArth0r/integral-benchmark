@@ -3,6 +3,7 @@
 import hashlib
 import json
 from functools import lru_cache
+from dataclasses import dataclass
 from pathlib import Path
 from .expressions import heads
 
@@ -57,10 +58,35 @@ def semantic_key(case):
 
 
 def load_cases(path):
-    cases = [validate(json.loads(line)) for line in Path(path).read_text(encoding="utf-8").splitlines() if line.strip()]
+    # Do not retain a second corpus-sized string and split-lines list.
+    with Path(path).open(encoding='utf-8') as stream:
+        cases = [validate(json.loads(line)) for line in stream if line.strip()]
     ids = [c["id"] for c in cases]
     if len(set(ids)) != len(ids): raise ValueError("Duplicate case IDs")
     return cases
+
+
+@dataclass(frozen=True)
+class PreparedCorpus:
+    """Internal read-only snapshot shared by paired runs, not a result cache.
+
+    The case dictionaries are borrowed, never modified by runner/checkpoint code.
+    Each source ID still receives an independent solve and verification attempt.
+    """
+    path: Path
+    cases: list
+    sha256: str
+
+    @classmethod
+    def load(cls, path):
+        path = Path(path).resolve()
+        cases = load_cases(path)
+        return cls(path, cases, digest(cases))
+
+    def for_path(self, path):
+        if self.path != Path(path).resolve():
+            raise ValueError('Prepared corpus path does not match requested corpus')
+        return self.cases, self.sha256
 
 
 def write_json(path, obj):

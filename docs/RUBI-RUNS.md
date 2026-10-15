@@ -61,6 +61,35 @@ recorded separately. `Root`/`Power` and `LogGamma` conventions are described in
 [the protocol](PROTOCOL.md). No output is automatically declared a CE bug merely
 because independent verification failed or timed out.
 
+### Optional faster verification
+
+Add `--verifier-mode warm --verifier-recycle 100` to a **new** full baseline.
+Each runner thread then owns one reusable verifier process. SymPy is imported
+once per worker, and its global assumptions and registered symbolic caches are
+cleared before and after every case. Each request still has its own deadline;
+a timeout, crash without a response, or invalid result discards the worker.
+Workers also recycle after the configured number of cases. There is no answer
+cache, no duplicate-case skipping, and no solver-engine reuse.
+
+Fresh-process verification remains the default and the strongest isolation
+reference. Warm mode reuses interpreter/module state and is explicitly labelled
+in run metadata; tests establish parity for the documented regression fixtures,
+not every possible SymPy expression. Startup is charged to the request needing
+the worker, including after recycling. Changing this mode or recycling interval
+changes the run fingerprint: never resume a fresh-mode journal as a warm run.
+The already-running `53946ae` baseline remains pinned to fresh mode.
+
+Paired runs now parse and validate the corpus once, share that read-only snapshot
+between the two configurations and final report, and reuse its digest. Input is
+read line-by-line instead of keeping a second corpus-sized string plus split-line
+list in memory. Every source ID still has independent solver and verifier evidence.
+
+Measure startup with `python -m scripts.profile_runner --run /path/to/ce --run
+/path/to/ce-rubi --repeats 6 --output /path/to/profile.json`. It reads every complete
+journal record available at inspection and times a synthetic derivative check;
+it does not select or run a coverage sample. Partial-prefix timings must not be
+extrapolated into a full-corpus score or advertised as a CAS speed ranking.
+
 From the benchmark checkout, with its Python dependencies installed:
 
 ```sh

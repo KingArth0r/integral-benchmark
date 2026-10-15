@@ -11,6 +11,7 @@ import subprocess
 import sys
 import time
 import math
+import threading
 from .model import ROOT, digest, load_cases
 
 SOLVER_FIELDS = ("schema_version", "id", "kind", "integrand", "variable", "domains",
@@ -49,13 +50,20 @@ def invoke(command, request, timeout, env=None):
 def run(corpus, output, engine, timeout=10, verify_timeout=5, jobs=1, limit=None,
         ce_root=None, node="node", external=None, rules=False, seed=20261003, ce_module=None,
         ce_rules_module=None, resume=False, batch_size=None, setup_timeout=120,
-        rule_step_budget=300000, stop_event=None):
+        rule_step_budget=300000, stop_event=None, prepared_corpus=None,
+        verifier_mode='fresh', verifier_recycle=100):
     import random
     if any(not math.isfinite(x) or x <= 0 for x in (timeout, verify_timeout, setup_timeout)):
         raise ValueError('Timeouts must be positive finite values')
     if rule_step_budget < 0: raise ValueError('Rule step budget must be nonnegative')
-    cases = load_cases(corpus)
-    corpus_hash = digest(cases)
+    if verifier_mode not in {'fresh', 'warm'}: raise ValueError('Unknown verifier mode')
+    if type(verifier_recycle) is not int or verifier_recycle < 1:
+        raise ValueError('Verifier recycle count must be a positive integer')
+    if prepared_corpus is not None:
+        cases, corpus_hash = prepared_corpus.for_path(corpus)
+    else:
+        cases = load_cases(corpus)
+        corpus_hash = digest(cases)
     # Family-round-robin selection avoids taking only the first source/chapter.
     if limit is not None:
         groups = {}
@@ -124,6 +132,9 @@ def run(corpus, output, engine, timeout=10, verify_timeout=5, jobs=1, limit=None
                 "selected_ids": [c["id"] for c in cases], "selection_seed": seed,
                 "isolation": "fresh process per case; CE setup and solve have separate hard budgets",
                 "verifier": "SymPy " + sympy.__version__, "independent_engine_verifier": engine != "sympy",
+                'verifier_mode': verifier_mode,
+                'verifier_recycle': verifier_recycle if verifier_mode == 'warm' else None,
+                'verification_budget_semantics': 'request wall time including spawn/import when a new worker is needed',
                 "memory_limit": "not-enforced", "repeats": 1,
                 "comparison_warning": "Cold-start coverage run; parallel contention and one repetition preclude performance rankings",
                 'assumptions_status_counts': dict(Counter(c.get('assumptions_status', 'explicit-case-contract') for c in cases)),
@@ -132,6 +143,19 @@ def run(corpus, output, engine, timeout=10, verify_timeout=5, jobs=1, limit=None
     metadata['harness_sha256'] = harness_digest()
     pinned_modules = {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in
                       ([module] + ([rules_module] if rules else []) if engine == 'ce' else [])}
+    local = threading.local()
+    verifiers = []
+    verifier_lock = threading.Lock()
+
+    def check(request):
+        if verifier_mode == 'fresh':
+            return invoke([sys.executable, '-m', 'integral_benchmark.verifier'], request, verify_timeout)
+        if not hasattr(local, 'verifier'):
+            from .warm_verifier import WarmVerifier
+            local.verifier = WarmVerifier(verifier_recycle)
+            with verifier_lock:
+                verifiers.append(local.verifier)
+        return local.verifier.invoke(request, verify_timeout)
 
     def one(case):
         if stop_event is not None and stop_event.is_set():
@@ -155,8 +179,7 @@ def run(corpus, output, engine, timeout=10, verify_timeout=5, jobs=1, limit=None
         elif result["status"] not in {"answer", "conditional"} and case["expected"]["status"] not in {"divergent", "undefined"}:
             verification = {"verdict": "not-solved", "wall_ms": 0}
         else:
-            verification = invoke([sys.executable, "-m", "integral_benchmark.verifier"],
-                                  {"case": case, "result": result}, verify_timeout)
+            verification = check({'case': case, 'result': result})
         if "verdict" not in verification:
             verification["verdict"] = "verification-timeout" if verification.get("status") == "timeout" else "verifier-error"
         return {"id": case["id"], "family": case["family"], "kind": case["kind"],
@@ -165,4 +188,10 @@ def run(corpus, output, engine, timeout=10, verify_timeout=5, jobs=1, limit=None
                 "case_sha256": digest(case), "result": result, "verification": verification}
 
     from .checkpoint import execute
-    return execute(output, metadata, cases, one, jobs, resume, batch_size)
+    try:
+        return execute(output, metadata, cases, one, jobs, resume, batch_size)
+    finally:
+        # execute's worker threads have joined, including on errors. No request
+        # can race this cleanup or deliver a late result to a subsequent run.
+        for verifier in verifiers:
+            verifier.close()
