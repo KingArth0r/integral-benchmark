@@ -4,6 +4,12 @@ Adapters are trusted executables invoked without a shell. Each process accepts
 one UTF-8 JSON object on stdin and returns exactly one JSON object on stdout.
 Diagnostic logs belong on stderr. A new process is used for each case.
 
+CE uses protocol version 2: one `ready` JSON line after engine/rule loading,
+then one `result` line containing the usual response object, then process exit.
+The parent independently enforces setup and solve deadlines. It preserves setup
+metadata even when the solve times out. No engine, assumption context, or compiled
+rule binding is shared between cases. Other adapters retain version 1.
+
 ## Request
 
 ```json
@@ -41,8 +47,33 @@ An adapter must explicitly reject unsupported translations rather than invent a
 function or silently change branch conventions. The reference implementation's
 operator allowlist is in `expressions.py`.
 
+CE output `Root` and `Power` are exported as `CERoot` and `CEPower`, not assumed
+identical to principal-complex powers: CE uses real odd roots on negative real
+inputs. The verifier translates known domains exactly. Unknown branch domains
+can receive only `identity-checked-restricted`, with the excluded negative real
+axis recorded. This is not included in the ordinary checked count. Fractional or
+symbolic powers in CE input also carry branch-review warnings. An integral that
+lost branch information while simplifying must not silently become a global pass.
+`LogGamma` is the analytic log-gamma, distinct from principal `Log(Gamma(x))`.
+
+Explicit assumptions use expression trees, not executable strings. CE accepts
+only predicates its assumption API reports as accepted/redundant; rejected or
+contradictory assumptions produce `unsupported-assumptions`. The independent
+verifier supports scalar symbol/finite-constant inequalities and non-equality,
+including conjunctions, and refuses other predicates. Parameter exceptional
+values and global domain completeness remain uncertified even after a local
+derivative identity. Conditional answers retain their expression and conditions
+and receive `conditional-unverified`, never unconditional credit.
+
 This small language is similar to MathJSON but is an independent benchmark
 contract. In particular CE's `Ln` is mapped to benchmark `Log` explicitly.
+
+`FractionalPartFloor(x)` explicitly means the real floor-based fractional part
+`x-Floor(x)` in [0,1), including for negative x. It maps to CE `Fract` and SymPy
+`frac`, NOT directly to Wolfram's signed `FractionalPart`. For instance its value
+at -5/4 is 3/4. Benchmark `Ceiling` maps to CE `Ceil`. `Which` cases, when present,
+have alternating condition/value operands with first-true semantics; adapters
+that cannot translate their predicates must report a translation error.
 
 ## Response
 
@@ -60,6 +91,13 @@ accuracy/error-bound contract before implementation.
 The harness adds `timeout`, `launch-error`, `process-error`, or `protocol-error`
 when appropriate. Optional `reason`, `native_status`, and `answer_text` preserve
 diagnostics. Never return `divergent` merely because a solver returned its input.
+
+Protocol 2 additionally distinguishes `setup-timeout` and `setup-error` from
+solver failure. Setup/protocol/process failures receive `infrastructure-error`;
+three consecutive infrastructure errors stop the queue after saving evidence.
+`setup_wall_ms`, `solve_wall_ms`, engine-reported `solver_ms`, total `wall_ms`, and
+verification time are separate measurements. Solve wall time includes translation,
+assumptions, integration, serialization, and process exit. It is not warm throughput.
 Never infer Cauchy principal value semantics unless `kind` explicitly requests it.
 
 Adapters should report exact engine/backend version, settings, and solver time.
